@@ -79,6 +79,7 @@ require( ABSPATH . WPINC . '/class-wp.php' );
 require( ABSPATH . WPINC . '/class-wp-error.php' );
 //插件类
 require( ABSPATH . WPINC . '/plugin.php' );
+//
 require( ABSPATH . WPINC . '/pomo/mo.php' );
 
 

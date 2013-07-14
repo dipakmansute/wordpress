@@ -1,0 +1,33 @@
+/*--Images---------------------------------------------------------*/
+.ggclCtnr { position: relative; }
+.ggclItemCntr { float: left; margin-top: 20px; margin-left: 20px; }
+.ggclImg { overflow: hidden; position: relative; text-align: center; line-height: 0;}
+.ggclImg img { -webkit-transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; -o-transition: all 0.5s ease-in-out; -ms-transition: all 0.5s ease-in-out; transition: all 0.5s ease-in-out; }
+.ggclImgFd img:hover { zoom:1; filter: alpha(opacity=70); opacity:0.7; transition-delay: 0.5s; }
+.ggclImgSc img:hover { -moz-transform: scale(1.05); -webkit-transform: scale(1.05); -o-transform: scale(1.05); -ms-transform: scale(1.05); transform: scale(1.05); }
+/*--Images White Skin-----------------------------------------------------*/
+.ggclImgFr_W, .ggclImgFr5_W { -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); -moz-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
+.ggclImgFr_W { border: 10px solid #FFFFFF; }
+.ggclImgFr5_W { border: 5px solid #FFFFFF; }
+.ggclImgS_W { -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); -moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); }
+.ggclImgB_W img, .ggclImgS_W img, .ggclImgFr_W img, .ggclImgFr5_W img { border: 1px solid #8F8F8F; }
+.ggclImgFrBr_W { border: 1px solid #E8E8E8; }
+/*--Images Black Skin-----------------------------------------------------*/
+.ggclImgB_B img { border: 1px solid #808080; }
+.ggclImgS_B img { border: 1px solid #808080; }
+.ggclImgFr_B { border: 10px solid #FFFFFF; }
+.ggclImgFr5_B { border: 5px solid #FFFFFF; }
+.ggclImgFr_B img, .ggclImgFr5_B img { border: 1px solid #8F8F8F; }
+.ggclImgFrBr_B { border: 1px solid #E8E8E8; }
+/*--Text aligment---------------------------------------------------------*/
+.ggclAlignC { margin-left: auto; margin-right: auto; text-align: center; }
+.ggclAlignL { text-align: left; }
+.ggclAlignR { text-align: right; }
+/*--Multiline---------------------------------------------------------*/
+.ggclTxtMlCntr { margin-top: 5px; position: relative; }
+.ggclTxtMlCntr p { line-height: 150%; padding-top: 0; }
+/*--Misc----------------------------------------------------------------*/
+.ggclImgBkgB { background-color: #000000; }
+.ggclImgBkgW { background-color: #FFFFFF; }
+.ggclClr{ clear: both; font-size: 1px; margin: 0; padding: 0; border: 0; height: 0;}
+/*--PLUGIN-END---------------------------------------------------------*/

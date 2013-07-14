@@ -14,7 +14,21 @@
 
 
 
+WP初始化过程：
+基本过程是index.php ->wp-blog.header.php ->wp-load.php
+通过wp-load.php 先后包含了wp-config.php, wp-setting.php,classes.php,fucntions.php query.php等文件,
 
+建 立变量：在wp-setting.php文件中建立了三个全局变量,$wp_the_query,$wp_rewrite和$wp ,
+分别为WP_Query,WP_Rewrite和WP类的实例,另外建立了一个$wp_query=&$wp_the_query,
+$wp_the_query = & new WP_Query();
+$wp_query     = & $wp_the_query;
+$wp_rewrite   = & new WP_Rewrite();
+$wp           = & new WP();
+
+!!!(之所以这样做是为了通过$query_posts等方式新建自定义查询时不会损坏WP主循环,
+在自定义查询结束后可以调用$wp_reset_query把$wp_query还原为$wp_the_query引用). 
+
+然后,wp-blog-header执行wp()函数,并通过其调用$wp所属WP类的main方法,这个方法又调用一系列方法
 
 
 
@@ -68,7 +82,7 @@ WP_CONTENT_DIR/advanced-cache.php，属于drop-in，供高级的缓存插件使�
 加载兼容性函数库，以function_exist()为判断
 加载wp主要函数库，Main WordPress API
 加载wp环境设置类
-加载//插件类
+加载//插件类plagin.php
 
 
 调用 require_wp_db() 函数，引入 wpdb 类，或者数据库 drop-in db.php (如果存在的话)。

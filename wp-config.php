@@ -75,7 +75,18 @@ define('WPLANG', 'zh_CN');
  * 将这个值改为“true”，WordPress 将显示所有用于开发的提示。
  * 强烈建议插件开发者在开发环境中启用本功能。
  */
-define('WP_DEBUG', false);
+define('WP_DEBUG', true);
+//数据库调试
+define('SAVEQUERIES', true);
+/**
+//开启调试
+define('WP_DEBUG', true);
+//禁止显示
+define('WP_DEBUG_DISPLAY', true);
+//调试错误在log中
+define('WP_DEBUG_LOG', true);
+*/
+
 
 /* 好了！请不要再继续编辑。请保存本文件。使用愉快！ */
 

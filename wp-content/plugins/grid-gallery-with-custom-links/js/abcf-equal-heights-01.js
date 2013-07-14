@@ -1,0 +1,1 @@
+(function(a){a.fn.equalHs=function(){a(this).each(function(){var b=0;a(this).children().each(function(){if(a(this).height()>b){b=a(this).height()}});a(this).children().not(":last").css({"min-height":b+1})});return this}})(jQuery);
