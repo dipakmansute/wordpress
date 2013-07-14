@@ -20,7 +20,7 @@ function hello_footer1($arg) {
 function hello_footer2($arg) {
 	echo "<p id='dolly'>我叫夏又桥".$arg."</p>";
 }
-do_action_ref_array();
+
 // Now we set that function up to execute when the admin_notices action is called
 add_action( 'footer_bottom', 'hello_footer1', 1000, 1 );
 add_action( 'footer_bottom', 'hello_footer2', 100, 1 );

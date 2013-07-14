@@ -9,7 +9,7 @@
 
 /**
  * Replaces common plain text characters into formatted entities
- *
+ * 解决WordPress英文符号半角变全角的问题
  * As an example,
  * <code>
  * 'cause today's effort makes it worth tomorrow's "holiday"...
@@ -1063,9 +1063,7 @@ function sanitize_html_class( $class, $fallback = '' ) {
 
 /**
  * Converts a number of characters from a string.
- * <title> 和 <category> 这些标签将会被删除
-<br> 和 <hr> 被转换成 <br /> 和 <hr /> 这样正确的写法。
-一些 Unicode 的字符转换到转换到有效范围内。
+ * 规范为xhtml格式，移除没有封闭的标签，转化单标签为正确格式
  *
  * Metadata tags <<title>> and <<category>> are removed, <<br>> and <<hr>> are
  * converted into correct XHTML and Unicode characters are converted to the
@@ -2664,7 +2662,7 @@ function esc_js( $text ) {
 }
 
 /**
- * Escaping for HTML blocks.
+ * Escaping for HTML blocks.转义
  *
  * @since 2.8.0
  *

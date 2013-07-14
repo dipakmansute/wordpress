@@ -164,7 +164,6 @@ add_action( 'wp_enqueue_scripts', 'twentytwelve_scripts_styles' );
  */
 function twentytwelve_wp_title( $title, $sep ) {
 	global $paged, $page;
-
 	if ( is_feed() )
 		return $title;
 

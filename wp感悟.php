@@ -73,23 +73,57 @@ remove_action( $tag, $function_to_remove, $priority, $accepted_args );
 许多默认的动作都定义在 wp-includes/default-filters.php 文件中。
 通过浏览这个文件你就会明白 WordPress 是如何使用动作钩子的。
 *
+删除符合条件的动作
 remove_all_actions( $tag[钩子], $priority[优先级] );
 只要满意条件都将被删除，如remove_all_actions( 'wp_head' );删除所有绑定在这个钩子上的功能
 *
+是否已经存在
 has_action( $tag, $function_to_check );
 后面参数可选，也是满足条件即可，
 has_action() 函数的返回值是 Boolean 或者 一个整型值。
 如果 $function_to_check 参数为空，那么如果有动作已经添加到了钩子中就返回 true，反之，返回 false。
 而如果 $function_to_check 设置了，而且这个函数已经添加到了钩子里面，则返回该动作的***优先级***否则返回 false。
 *
-*
-*
-*
+判断是否已经执行了
+did_action( $tag )
+使你的插件可以检查一个动作钩子是否已经被执行，或者记录执行的次数。
+这也意味着这一次页面的加载过程中有些动作被执行了多次，这个参数返回动作已经执行的次数，如果还未执行，返回 false。
+这个函数的一般用途是判断一个动作钩子是否已经被触发，并执行基于 did_action() 的返回值的代码。
+下面的例子中，如果 plugins_loaded 动作钩子已经被触发，就定义一个 PHP 常量。
+if ( did_action( 'plugins_loaded' ) )
+define( 'BOJ_MYPLUGIN_READY' ,true );
 *
 *5.过滤
 *
+current_filter();
+同样类似于 did_action。不过它不仅仅对过滤器钩子有效，同样对动作钩子也有效，所以它返回的是当前的 action 或者 filter 钩子。
+这个函数在你对多个钩子使用单个函数，但是需要依赖不同的钩子执行不同的内容的时候非常的有用。
+例如，客户希望在 post 标题 和内容中限制一些内容，但是这两个限制的minganci的集合是不同的。
+使用 current_filter() 函数来根据钩子设置不同的minganci表就可以实现用一个函数同时过滤 the_content 和 the_title。
+使用下面的代码，你可以把minganci替换成**。
+add_filter( 'the_content', 'boj_replace_unwanted_words' );
+add_filter( 'the_title', 'boj_replace_unwanted_words' );
+即不同的钩子可以是同一个函数挂载，只是在处理的时候用current_filter()获取当前正在处理的钩子名而而已
+function boj_replace_unwanted_words( $text ) {
+如果过滤器钩子是 the_content
+if( 'the_content' == current_filter() )
+$words = array( 'min', 'gan', 'ci' );
+如果钩子是 the_title
+elseif( 'the_title' == current_filter() )
+$words = array( 'zhen', 'de', 'hen', 'min', 'gan' );
+替换minganci
+$text = str_replace( $words, '**', $text );
+return $text;
 *
-*
+过滤器中常用的快速返回函数
+写这样的代码一两次并没什么。但是写一个返回空数组的函数太傻了。WordPress 使之简单化了。
+因为要禁用这些表单项，你只需要使用 WordPress 的 __return_empty_array() 函数作为过滤器来快速返回一个空数组。如下：
+add_filter( 'user_contactmethods', '__return_empty_array' );
+还有几个类似的快速返回函数：
+__return_false
+__return_true
+__return_zero
+这也是挂载到钩子时只能是函数产生的结果，因为函数实在太灵活了
 *
 *
 *

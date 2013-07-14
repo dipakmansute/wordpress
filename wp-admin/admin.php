@@ -1,4 +1,7 @@
 <?php
+require_once('../FirePHPCore/fb.php');
+ob_start();
+fb('追踪开始！');
 /**
  * WordPress Administration Bootstrap
  *
