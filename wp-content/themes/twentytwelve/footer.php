@@ -19,14 +19,6 @@
 	</footer><!-- #colophon -->
 </div><!-- #page -->
 
-<?php 
-wp_footer(); 
-
-//创建一个测试钩子
-//为钩子传递参数
-$arg = '我日';
-do_action('footer_bottom', $arg);
-
-?>
+<?php wp_footer(); ?>
 </body>
 </html>
