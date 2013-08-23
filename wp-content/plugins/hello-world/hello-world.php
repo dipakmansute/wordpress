@@ -635,6 +635,39 @@ function boj_dashoboard_example_display() {
 	echo '<p><label for="comments-number">' . __('配置参数设置2：') . '</label>';
 	echo '<input id="comments-number" name="dashboard_test_number[items2]" type="text" value="' . $number2 . '" size="3" /></p>';
 }
+// 控制面板操作
+function example_remove_dashboard_widgets() {
+	global $wp_meta_boxes;// Globalize the metaboxes array, this holds all the widgets for wp-admin
+	// "快速发布"
+	unset ( $wp_meta_boxes ['dashboard'] ['side'] ['core'] ['dashboard_quick_press'] );
+	// "引入链接"
+	//unset ( $wp_meta_boxes ['dashboard'] ['normal'] ['core'] ['dashboard_incoming_links'] );
+	// "插件"
+	//unset ( $wp_meta_boxes ['dashboard'] ['normal'] ['core'] ['dashboard_plugins'] );
+	// "近期评论"
+	unset ( $wp_meta_boxes ['dashboard'] ['normal'] ['core'] ['dashboard_recent_comments'] );
+
+	//用户定义的那个
+	//unset ( $wp_meta_boxes ['dashboard'] ['normal'] ['core'] ['widget_id_str'] );
+
+	// "近期草稿"
+	unset ( $wp_meta_boxes ['dashboard'] ['side'] ['core'] ['dashboard_recent_drafts'] );
+	// "WordPress 开发日志"
+	unset ( $wp_meta_boxes ['dashboard'] ['side'] ['core'] ['dashboard_primary'] );
+	// "其它 WordPress 新闻"
+	unset ( $wp_meta_boxes ['dashboard'] ['side'] ['core'] ['dashboard_secondary'] );
+	// "概况"
+	unset ( $wp_meta_boxes ['dashboard'] ['normal'] ['core'] ['dashboard_right_now'] );
+	fb($wp_meta_boxes);
+}
+add_action ( 'wp_dashboard_setup', 'example_remove_dashboard_widgets' );
+
+// 以下这一行代码将删除 "Welcome" 面板
+//add_action ( 'load-index.php', 'remove_welcome_panel' );
+function remove_welcome_panel() {
+	remove_action ( 'welcome_panel', 'wp_welcome_panel' );
+}
+
 
 
 
@@ -701,66 +734,186 @@ function save_postdata($post_id) {
 	
 	foreach ( $new_meta_boxes as $meta_box ) {
 		//安全验证
-		if (! wp_verify_nonce ( $_POST [$meta_box ['name'] . '_noncename'], plugin_basename ( __FILE__ ) )) {
-			return $post_id;
+		if(isset($_POST [$meta_box ['name']])){//过滤自动保存，此时没有提交
+			if (! wp_verify_nonce ( $_POST [$meta_box ['name'] . '_noncename'], plugin_basename ( __FILE__ ) )) {
+				return $post_id;
+			}
 		}
 		
 		//判断权限，至少要有可编辑的权限
-		if ('page' == $_POST ['post_type']) {
-			if (! current_user_can ( 'edit_page', $post_id ))
-				return $post_id;
-		} else {
-			if (! current_user_can ( 'edit_post', $post_id ))
-				return $post_id;
+		if(isset($_POST ['post_type'])){
+			if ('page' == $_POST ['post_type']) {
+				if (! current_user_can ( 'edit_page', $post_id ))
+					return $post_id;
+			} else {
+				if (! current_user_can ( 'edit_post', $post_id ))
+					return $post_id;
+			}
 		}
 		
 		//保存入库
-		$data = $_POST [$meta_box ['name'] . '_value'];
-		
-		if (get_post_meta ( $post_id, $meta_box ['name'] . '_value' ) == "")
-			add_post_meta ( $post_id, $meta_box ['name'] . '_value', $data, true );
-		elseif ($data != get_post_meta ( $post_id, $meta_box ['name'] . '_value', true ))
-			update_post_meta ( $post_id, $meta_box ['name'] . '_value', $data );
-		elseif ($data == "")
-			delete_post_meta ( $post_id, $meta_box ['name'] . '_value', get_post_meta ( $post_id, $meta_box ['name'] . '_value', true ) );
+		if(isset($_POST [$meta_box ['name']])){
+			$data = $_POST [$meta_box ['name'] . '_value'];
+			
+			if (get_post_meta ( $post_id, $meta_box ['name'] . '_value' ) == "")
+				add_post_meta ( $post_id, $meta_box ['name'] . '_value', $data, true );
+			elseif ($data != get_post_meta ( $post_id, $meta_box ['name'] . '_value', true ))
+				update_post_meta ( $post_id, $meta_box ['name'] . '_value', $data );
+			elseif ($data == "")
+				delete_post_meta ( $post_id, $meta_box ['name'] . '_value', get_post_meta ( $post_id, $meta_box ['name'] . '_value', true ) );
+		}
 	}
 }
+
+//对原模型中的模块进行整理
+//在WordPress后台的文章编辑页，有很多的模块，
+//如"摘要"、"发送Trackbacks"、"分类"、"标签"、"自定义域"、"讨论"，"作者"等。我们可以进行整理操作
+
+add_action('admin_init', 'customize_meta_boxes');
+function customize_meta_boxes() {
+	// 删除以下两个模块categorydiv、tagsdiv-post_tag
+	//remove_meta_box( $id, $page, $context );
+	//remove_meta_box('categorydiv', 'post', 'normal');//删除分类模块
+	//remove_meta_box('tagsdiv-post_tag', 'post', 'normal');//删除标签模块,,,normal????
+}
+//常用的如下：
+/*
+分类：categorydiv
+标签：tagsdiv-post_tag
+摘要：postexcerpt
+发送trackbacks：trackbacksdiv
+自定义域：postcustom
+讨论：commentstatusdiv
+作者：authordiv
+评论：commentsdiv
+文章别名：slugdiv
+文章修订版：revisionsdiv
+
+$page
+    （字符串）（必需）要从那个编辑界面移除Meta模块，可用值：
+    'post'  - 文章编辑界面
+    'page'  - 页面编辑界面
+    'attachment'  - 附件编辑界面
+    'link' - 链接编辑界面
+    'dashboard' - 仪表盘
+    或者已注册的自定义文章类型的编辑界面，例如 'my-product'
+*/
+
+
+
 
 
 
 //注册自定义的类型，不一定是文章
+/*
+$labels:
+	'name' - 文章类型的名称，这个可以用中文(一般为复数，对于中文而言就无复数之说了)。
+	'singular_name' - 单篇文章对象的名称，(对于英文而言就是name的单数)，默认为name的值
+	'add_new' - 添加，这个是菜单名字
+	'add_new_item' - 添加，这个是添加页面的标题
+	'edit_item' - 编辑
+	'new_item' - 新建
+	'view_item' - 查看
+	'search_items' - 搜索
+	'not_found' - 查看所有而没有内容时显示
+	'not_found_in_trash'
+	'parent_item_colon'
+	'menu_name' - 菜单上要显示的名称
+	
+description-一些简短的介绍文字
+public-(布尔值)，用于定义publicly_queriable, show_ui, show_in_nav_menus and exclude_from_search的值
+publicly_queryable- (布尔值)可以从前台获取的变量(从url中，比如url重写)
+exclude_from_search - (布尔值)，是否能够被搜索到
+show_ui -  (布尔值)是否生成一个默认的管理页面，也就是是否在后台有管理页面。默认跟public的是一样
+show_in_menu -  是否在后台菜单项中显示，如果为ture,那么show_ui的值也必须设置为true,将会有一个顶级菜单项。还可以为一个字符串，类似'tools.php' 或者'edit.php?post_type=page'
+menu_position - 在后台菜单中的位置。
+menu_icon - 菜单的icon图标(一个url)。
+capability_type - 查看、编辑、删除的能力类型(capability)，默认为post
+capabilities - (数组，一般人用不到)
+map_meta_cap - (布尔值)，只有设置了capabilities才用的上
+hierarchical - (布尔值)，文章是否有层级关系，也就是是否允许有父级文章。
+$supports: - (数组)，对文章类型的一些功能支持
+    'title'-标题
+    'editor' (content) - 内容编辑器
+    'author' - 作者
+    'thumbnail' - 特色图像，主题还得支持特色图像才行
+    'excerpt' - 摘要
+    'trackbacks' - 引用
+    'custom-fields'-自定义字段
+    'comments' - 评论
+    'revisions' - 修订版
+    'page-attributes' - 页面属性，类似page，选择页面模板的那个
+    
+register_meta_box_cb - 当执行remove_meta_box() 和add_meta_box()时调用的函数
+taxonomies - 添加已经注册了的分类法(比如默认的分类、标签)
+permalink_epmask
+has_archive - 文章是否有归档，就是一个所有文章归档页面。
+rewrite - (布尔值或者数组)，是否有url重写，设置为false的话将会防止url重写，关于重写以后教程详细讲解。
+query_var - url重写会用到
+can_export - 是否输出
+show_in_nav_menus - 是否出现在设置菜单页面的选项中【这个决定我们在设置菜单时能不能看到它】
+_builtin - wordpress开发人员建议你不要使用这个参数哦。
+_edit_link -  wordpress开发人员建议你不要使用这个参数哦
+*/
+
+
+
 add_action ( 'init', 'my_custom_init' );
 function my_custom_init() {
 	$labels = array (
-			'name' => '书', 
-			'singular_name' => '书本singularname', 
+			'name' => '所有产品', 
+			'singular_name' => '产品', 
 			'add_new' => '添加', 
-			'add_new_item' => '添加一本新书', 
-			'edit_item' => '编辑书', 
-			'new_item' => '新书', 
-			'view_item' => '浏览', 
-			'search_items' => '搜索书', 
-			'not_found' => '没有发现书', 
-			'not_found_in_trash' => 'not_found_in_trash', 
-			'parent_item_colon' => '000', 
-			'menu_name' => '所有书' 
+			'add_new_item' => '添加新产品', 
+			'edit_item' => '编辑产品', 
+			'new_item' => '新增产品', 
+			'view_item' => '查看产品', 
+			'search_items' => '搜索产品', 
+			'not_found' => '没有发现什么产品', 
+			'not_found_in_trash' => '没有什么呀', 
+			'parent_item_colon' => '这又是什么', 
+			'menu_name' => '所有产品' 
 			);
 	$args = array (
 			'labels' => $labels, 
-			'public' => true, 
-			'publicly_queryable' => true, 
-			'show_ui' => true, 
-			'show_in_menu' => true, 
+			'public' => true, //为下面设置的公共默认值
+			'publicly_queryable' => true, //允许url传参
+			'show_ui' => true, //设置决定是否能看到这个类型
+			'show_in_admin_bar' => true, //是否显示在bar中
+			'show_in_menu' => true, //是否显示在菜单中
+			'show_in_nav_menus' => true, //重 - 是否出现在设置菜单页面的选项中
+			
+			'rewrite' => array('slug' => 'products'), //重写设定
+			
+			'taxonomies' => array('post_tag', 'category', 'link_category'), //使用系统的标签和分类【侧边栏多了一个分类法】
+			
 			'query_var' => true, 
-			'rewrite' => true, 
-			'capability_type' => 'post', 
-			'has_archive' => true, 
-			'hierarchical' => false, 
-			'menu_position' => null, 
-			'supports' => array ('title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ) 
+			'capability_type' => 'post', //查看、编辑、删除的能力类型(capability)，默认为post
+			/* //同等于：
+			 * 'capability_type' => 'book',
+			   'capabilities' => array(
+			        'edit_post' => 'edit_book',
+			        'edit_posts' => 'edit_books',
+			        'edit_others_posts' => 'edit_others_books',
+			        'publish_posts' => 'publish_books',
+			        'read_post' => 'read_book',
+			        'read_private_posts' => 'read_private_books',
+			        'delete_post' => 'delete_book',
+			        )
+			 */
+			
+			'has_archive' => true, //允许存档
+			'hierarchical' => false, //允许文章层级关系..提示：'hierarchical' => false 是指将分类（categories）转化成标签（tags）。
+			'menu_position' => 26, //菜单中的排序
+			'supports' => array ( 'title', 'editor', 'thumbnail', 'custom-fields' ) 
+			//标题，产品描述，缩略图，组图，属性，选择在哪个模板展示
 			);
-	register_post_type ( 'book', $args );
+	register_post_type ( 'product', $args );
 }
+	
+
+
+
 
 
 
