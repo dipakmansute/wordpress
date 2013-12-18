@@ -106,6 +106,7 @@ function unregister_nav_menu( $location ) {
 function register_nav_menu( $location, $description ) {
 	register_nav_menus( array( $location => $description ) );
 }
+
 /**
  * Returns an array of all registered navigation menus in a theme
  *

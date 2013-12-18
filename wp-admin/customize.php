@@ -111,8 +111,10 @@ do_action( 'customize_controls_print_scripts' );
 
 			<div id="customize-theme-controls"><ul>
 				<?php
-				foreach ( $wp_customize->sections() as $section )
+				//这里的后台主题控制是由主题函数注入进来的！
+				foreach ( $wp_customize->sections() as $section ) {
 					$section->maybe_render();
+				}
 				?>
 			</ul></div>
 		</div>

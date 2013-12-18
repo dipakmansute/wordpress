@@ -1,4 +1,8 @@
 <?php
+
+require_once('FirePHPCore/fb.php');
+ob_start();
+fb('追踪开始！');
 /**
  * Bootstrap file for setting the ABSPATH constant
  * and loading the wp-config.php file. The wp-config.php
@@ -39,7 +43,7 @@ if ( file_exists( ABSPATH . 'wp-config.php') ) {
 	//dirname(ABSPATH);    D:\xampp\www，即配置文件可以存放在站点的上级目录中，可供多个站点使用
 	//上述，wp-config.php在根目录下，且保证wp-settings.php不在根目录，实现多站点共享
 	require_once( dirname(ABSPATH) . '/wp-config.php' );
-
+	
 } else {
 
 	// A config file doesn't exist

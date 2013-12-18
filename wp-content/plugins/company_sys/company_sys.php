@@ -157,7 +157,7 @@ function remove_menus() {
 	while ( prev ( $menu ) ) {
 		$value = explode ( ' ', $menu [key ( $menu )] [0] );//解决有提示信息的特殊链接
 		if (in_array ( $value [0] != NULL ? $value [0] : "", $restricted )) {
-			unset ( $menu [key ( $menu )] );
+			//unset ( $menu [key ( $menu )] );
 		}
 	}
 }
@@ -204,9 +204,10 @@ function my_login_redirect($redirect_to){
 }
 
 
-
-
-
+//关闭一些更新提示?????
+// remove_action( 'admin_init', '_maybe_update_core' );
+// remove_action( 'admin_init', '_maybe_update_plugins' );
+// remove_action( 'admin_init', '_maybe_update_themes' );
 
 
 
@@ -285,6 +286,29 @@ function custom_dashboard_help() {
 
 
 
+add_filter('pre_term_name', 'gggg', 10 , 2);
+function gggg($d1, $d2){
+	return $d1.$d2;
+}
+
+$str1 = 'sssss';
+$str2 = 'tttt';
+
+//fb(apply_filters('pre_term_name', $str1, $str2));
+
+
+add_action('shutdown', 'gggg0');
+function gggg0(){
+	//echo '不好意思，程序发生了一个致命的错误，我想我应该做点什么';
+}
+// $a = new FooClass();
+
+
+add_action( 'after_setup_theme', 'aaaaa' );
+function aaaaa(){
+ 	global $wp;
+ 	$wp->add_query_var('abcd');
+}
 
 
 
@@ -295,9 +319,10 @@ function custom_dashboard_help() {
 
 
 
-
-
-
+add_filter('accachment_icon', 'jjjj');
+function jjjj(){
+	fb(func_get_args());
+}
 
 
 

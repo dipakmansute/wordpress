@@ -59,15 +59,15 @@ $core_actions_post = array(
 	'send-attachment-to-editor', 'save-attachment-order',
 );
 
-// Register core Ajax calls.
+// Register core Ajax calls.//customize_save
 if ( ! empty( $_GET['action'] ) && in_array( $_GET['action'], $core_actions_get ) )
 	add_action( 'wp_ajax_' . $_GET['action'], 'wp_ajax_' . str_replace( '-', '_', $_GET['action'] ), 1 );
 
-if ( ! empty( $_POST['action'] ) && in_array( $_POST['action'], $core_actions_post ) )
-	add_action( 'wp_ajax_' . $_POST['action'], 'wp_ajax_' . str_replace( '-', '_', $_POST['action'] ), 1 );
+//wp_ajax_customize_save
 
 add_action( 'wp_ajax_nopriv_autosave', 'wp_ajax_nopriv_autosave', 1 );
 
+//直接do_action牛X
 if ( is_user_logged_in() )
 	do_action( 'wp_ajax_' . $_REQUEST['action'] ); // Authenticated actions
 else

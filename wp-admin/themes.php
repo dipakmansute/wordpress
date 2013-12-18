@@ -1,6 +1,11 @@
 <?php
 /**
  * Themes administration panel.
+ * //http://localhost/wordpress/wp-admin/themes.php?
+ * action=activate&
+ * template=responsive&
+ * stylesheet=responsive&
+ * _wpnonce=8865e91812
  *
  * @package WordPress
  * @subpackage Administration

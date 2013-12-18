@@ -12,7 +12,6 @@
 /*
  * Deprecated functions come here to die.
  */
-
 /**
  * @since MU
  * @deprecated 3.0.0

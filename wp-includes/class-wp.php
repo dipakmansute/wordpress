@@ -85,6 +85,7 @@ class WP {
 
 	/**
 	 * Add name to list of public query variables.
+	 * 添加一个名称到查询变量
 	 *
 	 * @since 2.1.0
 	 *
@@ -97,6 +98,7 @@ class WP {
 
 	/**
 	 * Set the value of a query variable.
+	 * 为查询变量设置一个值
 	 *
 	 * @since 2.3.0
 	 *
@@ -109,6 +111,7 @@ class WP {
 
 	/**
 	 * Parse request to find correct WordPress query.
+	 * 解析查询请求
 	 *
 	 * Sets up the query variables based on the request. There are also many
 	 * filters and actions that can be used to further manipulate the result.
@@ -183,7 +186,7 @@ class WP {
 					$req_uri = '';
 				$request = $req_uri;
 			}
-
+			
 			$this->request = $request;
 
 			// Look for matches.
@@ -244,7 +247,7 @@ class WP {
 				$this->did_permalink = false;
 			}
 		}
-
+		
 		$this->public_query_vars = apply_filters('query_vars', $this->public_query_vars);
 
 		foreach ( $GLOBALS['wp_post_types'] as $post_type => $t )
@@ -260,7 +263,7 @@ class WP {
 				$this->query_vars[$wpvar] = $_GET[$wpvar];
 			elseif ( isset( $perma_query_vars[$wpvar] ) )
 				$this->query_vars[$wpvar] = $perma_query_vars[$wpvar];
-
+			
 			if ( !empty( $this->query_vars[$wpvar] ) ) {
 				if ( ! is_array( $this->query_vars[$wpvar] ) ) {
 					$this->query_vars[$wpvar] = (string) $this->query_vars[$wpvar];
@@ -373,7 +376,7 @@ class WP {
 				$exit_required = true;
 			}
 		}
-
+		
 		$headers = apply_filters('wp_headers', $headers, $this);
 
 		if ( ! empty( $status ) )
@@ -397,10 +400,15 @@ class WP {
 				}
 			}
 		}
-
+		
+		//手动发送头信息
+// 		fb($headers);//$headers头信息
+		
 		foreach( (array) $headers as $name => $field_value )
 			@header("{$name}: {$field_value}");
 
+		
+		//如果是404直接挂掉
 		if ( $exit_required )
 			exit();
 
@@ -409,6 +417,7 @@ class WP {
 
 	/**
 	 * Sets the query string property based off of the query variable property.
+	 * 构建请求
 	 *
 	 * The 'query_string' filter is deprecated, but still works. Plugins should
 	 * use the 'request' filter instead.
@@ -435,6 +444,7 @@ class WP {
 
 	/**
 	 * Set up the WordPress Globals.
+	 * 将query_string，posts，request注册为全局变量
 	 *
 	 * The query_vars property will be extracted to the GLOBALS. So care should
 	 * be taken when naming global variables that might interfere with the
@@ -466,6 +476,7 @@ class WP {
 
 	/**
 	 * Set up the current user.
+	 * 获取当前用户的信息，这个函数可以重写
 	 *
 	 * @since 2.0.0
 	 */
@@ -482,6 +493,7 @@ class WP {
 	function query_posts() {
 		global $wp_the_query;
 		$this->build_query_string();
+		//fb($this->query_string);//pagename=sample-page
 		$wp_the_query->query($this->query_vars);
  	}
 
@@ -504,6 +516,7 @@ class WP {
 			return;
 
 		// Never 404 for the admin, robots, or if we found posts.
+		//直接通过数据库层面返回是否有页面，包括蜘蛛
 		if ( is_admin() || is_robots() || $wp_query->posts ) {
 			status_header( 200 );
 			return;
@@ -543,12 +556,19 @@ class WP {
 	 * @param string|array $query_args Passed to {@link parse_request()}
 	 */
 	function main($query_args = '') {
+		//获取当前用户到全局：$current_user中
 		$this->init();
+		//解析，路由parse_request方法, 
 		$this->parse_request($query_args);
+		//手动发送header??为何
 		$this->send_headers();
+		//WP从这里开始解析URL并建立主循环。按照url进行查询并获取正确内容
 		$this->query_posts();
+		//从数据库的层面告诉客户端当前的请求将返回一种什么状态，404，200.。。。
 		$this->handle_404();
+		//注册全局
 		$this->register_globals();
+		//
 		do_action_ref_array('wp', array(&$this));
 	}
 

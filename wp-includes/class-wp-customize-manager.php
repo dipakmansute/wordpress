@@ -1,6 +1,7 @@
 <?php
 /**
  * Customize Manager.
+ * 自定义管理类
  *
  * @package WordPress
  * @subpackage Customize
@@ -32,6 +33,7 @@ final class WP_Customize_Manager {
 		require( ABSPATH . WPINC . '/class-wp-customize-section.php' );
 		require( ABSPATH . WPINC . '/class-wp-customize-control.php' );
 
+		//添加wp_die_handler函数到wp_die_handler
 		add_filter( 'wp_die_handler', array( $this, 'wp_die_handler' ) );
 
 		add_action( 'setup_theme',  array( $this, 'setup_theme' ) );
@@ -44,10 +46,12 @@ final class WP_Customize_Manager {
 		remove_action( 'init', 'wp_cron' );
 
 		// Do not run update checks when rendering the controls.
+		//关闭自动检测
 		remove_action( 'admin_init', '_maybe_update_core' );
 		remove_action( 'admin_init', '_maybe_update_plugins' );
 		remove_action( 'admin_init', '_maybe_update_themes' );
 
+		//主题更新自定义控制时触发！！并且由后台ajax完成
 		add_action( 'wp_ajax_customize_save', array( $this, 'save' ) );
 
 		add_action( 'customize_register',                 array( $this, 'register_controls' ) );
@@ -93,8 +97,9 @@ final class WP_Customize_Manager {
 	 * @return string
 	 */
 	public function wp_die_handler() {
-		if ( $this->doing_ajax() )
+		if ( $this->doing_ajax() ) {
 			return '_ajax_wp_die_handler';
+		}
 
 		return '_default_wp_die_handler';
 	}

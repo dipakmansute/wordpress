@@ -145,4 +145,4 @@ add_action( 'admin_footer',
   'zh_cn_l10n_patch_character_count_register_script' );
 
 
-?>
+

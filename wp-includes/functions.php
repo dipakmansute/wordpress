@@ -477,6 +477,7 @@ function do_enclose( $content, $post_ID ) {
 
 /**
  * Perform a HTTP HEAD or GET request.
+ * 执行一个请求获取header头部
  *
  * If $file_path is a writable filename, this will do a GET request and write
  * the file to that path.
@@ -778,6 +779,7 @@ function wp_remote_fopen( $uri ) {
  */
 function wp( $query_vars = '' ) {
 	global $wp, $wp_query, $wp_the_query;
+	
 	$wp->main( $query_vars );
 
 	if ( !isset($wp_the_query) )
@@ -887,6 +889,7 @@ function status_header( $header ) {
 	if ( function_exists( 'apply_filters' ) )
 		$status_header = apply_filters( 'status_header', $status_header, $header, $text, $protocol );
 
+	//发送header表示当前内容存在的状态
 	return @header( $status_header, true, $header );
 }
 
@@ -1401,6 +1404,7 @@ function path_join( $base, $path ) {
  * Function's preference is the return value of <code>sys_get_temp_dir()</code>,
  * followed by your PHP temporary upload directory, followed by WP_CONTENT_DIR,
  * before finally defaulting to /tmp/
+ * 获取临时路径
  *
  * In the event that this function does not find a writable location,
  * It may be overridden by the <code>WP_TEMP_DIR</code> constant in
@@ -1441,6 +1445,7 @@ function get_temp_dir() {
 
 /**
  * Workaround for Windows bug in is_writable() function
+ * 在win平台中判断是否可写
  *
  * @since 2.8.0
  *
@@ -1610,6 +1615,7 @@ function wp_upload_dir( $time = null ) {
 
 /**
  * Get a filename that is sanitized and unique for the given directory.
+ * 获取唯一的文件名
  *
  * If the filename is not unique, then a number will be added to the filename
  * before the extension, and will continue adding numbers until the filename is
@@ -1751,6 +1757,7 @@ function wp_upload_bits( $name, $deprecated, $bits, $time = null ) {
 
 /**
  * Retrieve the file type based on the extension name.
+ * 测试文件类型
  *
  * @package WordPress
  * @since 2.5.0
@@ -2291,6 +2298,7 @@ function _scalar_wp_die_handler( $message = '' ) {
 
 /**
  * Send a JSON response back to an Ajax request.
+ * 发送一个json响应，返回一个ajax请求
  *
  * @since 3.5.0
  *

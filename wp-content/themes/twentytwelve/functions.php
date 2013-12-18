@@ -49,36 +49,47 @@ function twentytwelve_setup() {
 	 * If you're building a theme based on Twenty Twelve, use a find and replace
 	 * to change 'twentytwelve' to the name of your theme in all the template files.
 	 */
+	//加载主题主语言包
+	//wp-content/themes/twentytwelve/languages/zh_CN.mo//优先加载
+	//wp-content/languages/themes/twentytwelve-zh_CN.mo//如果没有则最终加载
 	load_theme_textdomain( 'twentytwelve', get_template_directory() . '/languages' );
-
+	
 	// This theme styles the visual editor with editor-style.css to match the theme style.
-	add_editor_style();
+	//让主题支持一些自定义功能
+	//$_wp_theme_features这是一个什么变量？它存储着一系列数组，包括是否加载文件，上传的背景图像是什么。。。。
+	//注册一些功能：把主题自定义功能返回到全局变量$_wp_theme_features中
+	//此处用到了add_theme_support( 'editor-style' )，将样式注册到功能中，表示主题加载这个样式文件
+	add_editor_style();//后台编辑器的css目的是为了兼容前台发布的文章
 
 	// Adds RSS feed links to <head> for posts and comments.
-	add_theme_support( 'automatic-feed-links' );
+	add_theme_support( 'automatic-feed-links' );//添加
 
 	// This theme supports a variety of post formats.
 	add_theme_support( 'post-formats', array( 'aside', 'image', 'link', 'quote', 'status' ) );
-
-	// This theme uses wp_nav_menu() in one location.
-	register_nav_menu( 'primary', __( 'Primary Menu', 'twentytwelve' ) );
 
 	/*
 	 * This theme supports custom background color and image, and here
 	 * we also set up the default background color.
 	 */
-	add_theme_support( 'custom-background', array(
-		'default-color' => 'e6e6e6',
-	) );
+	add_theme_support( 'custom-background', array('default-color' => 'e6e6e6',) );
 
 	// This theme uses a custom image size for featured images, displayed on "standard" posts.
 	add_theme_support( 'post-thumbnails' );
-	set_post_thumbnail_size( 624, 9999 ); // Unlimited height, soft crop
+	
+	// This theme uses wp_nav_menu() in one location.
+	
+	register_nav_menu( 'primary', __( 'Primary Menu', 'twentytwelve' ) );
+	
+	// Unlimited height, soft crop
+	set_post_thumbnail_size( 624, 9999 );
 }
+//为主题增加自定义功能【在主题安装完成时】
 add_action( 'after_setup_theme', 'twentytwelve_setup' );
+
 
 /**
  * Adds support for a custom header image.
+ * //此文件自定义了整个头部！都是通过钩子实现的
  */
 require( get_template_directory() . '/inc/custom-header.php' );
 
@@ -468,6 +479,7 @@ add_action( 'template_redirect', 'twentytwelve_content_width' );
  * @param WP_Customize_Manager $wp_customize Theme Customizer object.
  * @return void
  */
+//注册自定义功能时注入相关主题信息:标题，描述，及标题颜色
 function twentytwelve_customize_register( $wp_customize ) {
 	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
 	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
@@ -489,3 +501,29 @@ add_action( 'customize_preview_init', 'twentytwelve_customize_preview_js' );
 
 //显示链接管理 by seaqi
 add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+
+
+
+
+
+
+// add_filter( 'attachment_icon', 'jjjjj' );
+// function jjjjj(){
+// 	fb(func_get_args());
+// 	exit;	
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

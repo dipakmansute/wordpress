@@ -8,6 +8,7 @@
 
 /**
  * Gets the current locale.
+ * 获取当前的语言环境
  *
  * If the locale is set, then it will filter the locale in the 'locale' filter
  * hook and return the value.

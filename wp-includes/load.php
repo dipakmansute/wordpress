@@ -9,6 +9,7 @@
 
 /**
  * Turn register globals off.
+ * 关闭全局global
  *
  * @access private
  * @since 2.1.0

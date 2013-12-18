@@ -660,8 +660,28 @@ function preview_theme_ob_filter_callback( $matches ) {
  *
  * @param string $stylesheet Stylesheet name
  */
+//后台切换主题函数
 function switch_theme( $stylesheet ) {
 	global $wp_theme_directories, $sidebars_widgets;
+	/*
+	 * array(1) { [0]=> string(40) "D:\xampp\www\wordpress/wp-content/themes" } 
+	 * array(5) { 
+	 * ["wp_inactive_widgets"]=> array(0) { } 
+	 * ["sidebar-1"]=> array(7) { 
+	 * [0]=> string(8) "search-2" 
+	 * [1]=> string(14) "recent-posts-2" 
+	 * [2]=> string(17) "recent-comments-2" 
+	 * [3]=> string(10) "archives-2" 
+	 * [4]=> string(12) "categories-2" 
+	 * [5]=> string(6) "meta-2" 
+	 * [6]=> string(7) "pages-2" } 
+	 * ["sidebar-2"]=> array(0) { } 
+	 * ["sidebar-3"]=> array(0) { } 
+	 * ["orphaned_widgets_1"]=> array(3) { 
+	 * [0]=> string(6) "meta-3" 
+	 * [1]=> string(6) "meta-4" 
+	 * [2]=> string(6) "meta-5" } } 
+	 */
 
 	if ( is_array( $sidebars_widgets ) )
 		set_theme_mod( 'sidebars_widgets', array( 'time' => time(), 'data' => $sidebars_widgets ) );
@@ -692,7 +712,9 @@ function switch_theme( $stylesheet ) {
 	update_option( 'current_theme', $new_name );
 
 	if ( is_admin() && false === get_option( 'theme_mods_' . $stylesheet ) ) {
-		$default_theme_mods = (array) get_option( 'mods_' . $new_name );
+		$default_theme_mods = (array) get_option( 'mods_' . $new_name );//数据库中并没有这一项
+		
+		//首次安装这里并不起作用！！！！因为取得的$default_theme_mods为false
 		add_option( "theme_mods_$stylesheet", $default_theme_mods );
 	}
 
@@ -755,6 +777,7 @@ function get_theme_mods() {
 			delete_option( "mods_$theme_name" );
 		}
 	}
+	//fb($mods);
 	return $mods;
 }
 
@@ -775,7 +798,7 @@ function get_theme_mods() {
  */
 function get_theme_mod( $name, $default = false ) {
 	$mods = get_theme_mods();
-
+	
 	if ( isset( $mods[ $name ] ) )
 		return apply_filters( "theme_mod_$name", $mods[ $name ] );
 
@@ -1106,6 +1129,7 @@ function unregister_default_headers( $header ) {
  * @return string
  */
 function get_background_image() {
+	//第二个参数传递的一个默认值
 	return get_theme_mod('background_image', get_theme_support( 'custom-background', 'default-image' ) );
 }
 
@@ -1147,6 +1171,7 @@ function background_color() {
 function _custom_background_cb() {
 	// $background is the saved custom image, or the default image.
 	$background = set_url_scheme( get_background_image() );
+	//http://localhost/wordpress/wp-content/uploads/2013/08/cc-2.jpg
 
 	// $color is the saved custom color.
 	// A default has to be specified in style.css. It will not be printed here.
@@ -1207,10 +1232,14 @@ body.custom-background { <?php echo trim( $style ); ?> }
 function add_editor_style( $stylesheet = 'editor-style.css' ) {
 
 	add_theme_support( 'editor-style' );
+	//add_theme_support( 'menus' );
+	
 
-	if ( ! is_admin() )
+	if ( ! is_admin() ) {//判断是不是后台
 		return;
-
+	}
+	
+	//echo '以下是后台的工作';
 	global $editor_styles;
 	$editor_styles = (array) $editor_styles;
 	$stylesheet    = (array) $stylesheet;
@@ -1249,6 +1278,11 @@ function remove_editor_styles() {
  * @param string $feature the feature being added
  */
 function add_theme_support( $feature ) {
+	/*
+		menus,editor-style,automatic-feed-links,post-formats,
+		menus,custom-background,post-thumbnails,custom-header,
+		widgets,widgets,widgets,custom-header,custom-background
+	 */
 	global $_wp_theme_features;
 
 	if ( func_num_args() == 1 )
@@ -1361,7 +1395,7 @@ function add_theme_support( $feature ) {
 			// Merge in data from previous add_theme_support() calls. The first value registered wins.
 			if ( isset( $_wp_theme_features['custom-background'] ) )
 				$args[0] = wp_parse_args( $_wp_theme_features['custom-background'][0], $args[0] );
-
+				
 			if ( $jit )
 				$args[0] = wp_parse_args( $args[0], $defaults );
 
@@ -1408,8 +1442,19 @@ function _custom_header_background_just_in_time() {
 		// In case any constants were defined after an add_custom_background() call, re-run.
 		add_theme_support( 'custom-background', array( '__jit' => true ) );
 
-		$args = get_theme_support( 'custom-background' );
-		add_action( 'wp_head', $args[0]['wp-head-callback'] );
+		$args = get_theme_support( 'custom-background' );//此时只是通过默认值取得相关数据
+		/*
+		 * array([0] =>array(
+				['default-image'] =>
+				['default-color'] =>'e6e6e6'
+				['wp-head-callback'] =>'_custom_background_cb'
+				['admin-head-callback'] =>
+				['admin-preview-callback'] =>
+			))
+		 */
+		
+		//_custom_background_cb();
+		add_action( 'wp_head', $args[0]['wp-head-callback'] );//利用默认值调用相关函数！
 
 		if ( is_admin() ) {
 			require_once( ABSPATH . 'wp-admin/custom-background.php' );
@@ -1633,7 +1678,15 @@ function _wp_customize_include() {
 
 	require( ABSPATH . WPINC . '/class-wp-customize-manager.php' );
 	// Init Customize class
+	//创建自定义管理类$wp_customize
+	//它一共管理着三个类：
+	//class-wp-customize-setting.php,class-wp-customize-section.php,class-wp-customize-control.php
+	//maybe_render
+	//$wp_customize->sections() as $section {
+	//$section->maybe_render();
+
 	$GLOBALS['wp_customize'] = new WP_Customize_Manager;
+	
 }
 add_action( 'plugins_loaded', '_wp_customize_include' );
 

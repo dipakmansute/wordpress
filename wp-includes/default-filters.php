@@ -11,7 +11,6 @@
  *
  * @package WordPress
  */
-
 // Strip, trim, kses, special chars for string saves
 foreach ( array( 'pre_term_name', 'pre_comment_author_name', 'pre_link_name', 'pre_link_target', 'pre_link_rel', 'pre_user_display_name', 'pre_user_first_name', 'pre_user_last_name', 'pre_user_nickname' ) as $filter ) {
 	add_filter( $filter, 'sanitize_text_field'  );
@@ -127,7 +126,9 @@ foreach ( array( 'term_name_rss' ) as $filter ) {
 add_filter( 'wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2 );
 add_filter( 'wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3 );
 
+
 // Display filters
+//输入到模板中的hooks
 add_filter( 'the_title', 'wptexturize'   );
 add_filter( 'the_title', 'convert_chars' );
 add_filter( 'the_title', 'trim'          );
@@ -230,6 +231,7 @@ foreach ( array( 'rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'at
 }
 
 // WP Cron
+//默认开启的定时任务
 if ( !defined( 'DOING_CRON' ) )
 	add_action( 'init', 'wp_cron' );
 
@@ -290,4 +292,7 @@ add_filter( 'default_option_link_manager_enabled', '__return_true' );
 // This option no longer exists; tell plugins we always support auto-embedding.
 add_filter( 'default_option_embed_autourls', '__return_true' );
 
+//删除老版本的命名
 unset($filter, $action);
+
+

@@ -12,10 +12,6 @@
  * @var bool
  */
 
-require_once('FirePHPCore/fb.php');
-ob_start();
-fb('追踪开始！');
-
 
 define('WP_USE_THEMES', true);
 

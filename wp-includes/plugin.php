@@ -331,6 +331,10 @@ function current_filter() {
  * @param int $accepted_args optional. The number of arguments the function accept (default 1).
  */
 function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) {
+	if($tag == 'wp_head') {
+		echo '<br />';
+		var_dump($function_to_add);
+	}
 	return add_filter($tag, $function_to_add, $priority, $accepted_args);
 }
 
